@@ -1,6 +1,5 @@
 package com.msvc.inventario;
-/*
-import org.springframework.cloud.netflix.eureka.EnableEurekaClient;*/
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -8,7 +7,7 @@ import com.msvc.inventario.repository.InventarioRepository;
 import org.springframework.context.annotation.Bean;
 import com.msvc.inventario.model.Inventario;
 @SpringBootApplication
-//@EnableDicoveryClient
+@EnableDiscoveryClient
 public class InventarioServiceApplication {
 
 	public static void main(String[] args) {
