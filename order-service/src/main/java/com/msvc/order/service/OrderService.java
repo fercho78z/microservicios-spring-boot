@@ -32,12 +32,13 @@ public class OrderService {
 	    @Autowired
 	    private OrderRepository orderRepository;
 	    
-	    //@Autowired
-	   // WebClient webClient=WebClient.builder().baseUrl("http://localhots:8092").build();
-	    @Autowired
+	    //	@Autowired
+	    //WebClient webClient=WebClient.builder().baseUrl("http://localhots:8092").build();
+	    /*@Autowired
 	    private WebClient webClient;
-	    
-
+	    */
+	    @Autowired
+	    private WebClient.Builder webCliBuilder;
 
 	   
 	    
@@ -72,7 +73,7 @@ public class OrderService {
 	            inventarioServiceLookup.tag("call","inventario-service");
 	*/
 	            //InventarioResponse[] inventarioResponseArray = webClient.get().uri("/api/inventario",uriBuilder -> uriBuilder.queryParam("codigoSku",codigoSku).build())
-	        	InventarioResponse[] inventarioResponseArray = webClient.get().uri("http://127.0.0.1:8092/api/inventario",uriBuilder -> uriBuilder.queryParam("codigoSku",codigoSku).build())
+	        	InventarioResponse[] inventarioResponseArray = webCliBuilder.build().get().uri("http://inventario-service/api/inventario",uriBuilder -> uriBuilder.queryParam("codigoSku",codigoSku).build())
 		                .retrieve()
 	                    .bodyToMono(InventarioResponse[].class)
 	                    .block();

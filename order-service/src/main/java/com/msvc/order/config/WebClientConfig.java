@@ -1,5 +1,6 @@
 package com.msvc.order.config;
 
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -26,7 +27,7 @@ public class WebClientConfig {
 	 * "Consider defining a bean of type org.springframework.web.reactive.function.client.WebClient "
 	 *  se cguardo la pagina de la solcuion en programas de stackoverflow
 	 * */
-	
+	/*
 	@Bean
 	@Primary
     public WebClient builder(){
@@ -35,7 +36,18 @@ public class WebClientConfig {
             .clientConnector(new ReactorClientHttpConnector(httpClient))
             .build();
 	}
+	*/
 	
+	@Bean
+	@Primary
+	@LoadBalanced
+    public WebClient builder(){
+		 HttpClient httpClient = HttpClient.create().resolver(DefaultAddressResolverGroup.INSTANCE);
+		 return WebClient.builder()
+            .clientConnector(new ReactorClientHttpConnector(httpClient))
+            .build();
+	
+	}
 	/*
     @Bean
     public WebClient builder(){
