@@ -1,35 +1,54 @@
 package com.discovery.eureka.config;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-//import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-//import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-//import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-//import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.SecurityFilterChain;
+import static org.springframework.security.config.Customizer.withDefaults;
 
-//@Configuration
-//public class SecurityConfig extends WebSecurityConfigurerAdapter {
-public class SecurityConfig{
-/*    @Value("${app.eureka.username}")
-    private String username;
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+
+    // Valores desde el archivo de configuración (application.properties o application.yml)
+    @Value("${app.eureka.username}")
+    private String eurekaUsername;
 
     @Value("${app.eureka.password}")
-    private String password;
+    private String eurekaPassword;
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                .passwordEncoder(NoOpPasswordEncoder.getInstance())
-                .withUser(username).password(password)
-                .authorities("USER");
+    // Configuración del SecurityFilterChain con Spring Boot 3.x
+    @Bean
+    protected SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+        	.csrf(csrf -> csrf.disable()) // Desactiva CSRF si no es necesario
+            .authorizeHttpRequests((requests) -> requests
+                .anyRequest().authenticated()  // Cualquier solicitud debe estar autenticada
+            )
+            .httpBasic(withDefaults());  // Autenticación básica con configuración predeterminada
+
+
+        return http.build();
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-                .authorizeRequests().anyRequest()
-                .authenticated()
-                .and()
-                .httpBasic();
+    // UserDetailsService que carga las credenciales para autenticación básica
+    @Bean
+    protected UserDetailsService userDetailsService() {
+        // Aquí creamos el usuario con las credenciales de Eureka desde application.properties
+        UserDetails eurekaUser = User.builder()
+                .username(eurekaUsername)
+                .password("{noop}" + eurekaPassword)  // "{noop}" indica que no estamos cifrando la contraseña
+                //.roles("USER")  // Puedes ajustar los roles según sea necesario
+                .build();
+
+        return new InMemoryUserDetailsManager(eurekaUser);
     }
-*/}
+}
