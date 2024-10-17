@@ -22,6 +22,8 @@ public class InventarioService {
     @SneakyThrows
     public List<InventarioResponse> isInStock(List<String> codigoSku){
         log.info("Wait started");
+        Thread.sleep(10000);
+        log.info("Wait end");
         return inventarioRepository.findByCodigoSkuIn(codigoSku).stream()
                 .map(inventario ->
                         InventarioResponse.builder()

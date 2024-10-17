@@ -17,6 +17,7 @@ import com.msvc.order.model.Order;
 import com.msvc.order.model.OrderLineItems;
 import com.msvc.order.repository.OrderRepository;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -48,7 +49,7 @@ public class OrderService {
 	    @Autowired
 	    private Producer producer;
 	*/
-	    public void placeOrder(OrderRequest orderRequest){
+	    public String placeOrder(OrderRequest orderRequest){
 	        Order order = new Order();
 	        order.setNumeroPedido(UUID.randomUUID().toString());
 
@@ -57,7 +58,7 @@ public class OrderService {
 	                .map(this::mapToDto)
 	                .collect(Collectors.toList());
 	        order.setOrderLineItems(orderLineItems);
-	        orderRepository.save(order);
+	        //orderRepository.save(order);
 
 	        List<String> codigoSku = order.getOrderLineItems().stream()
 	                        .map(OrderLineItems::getCodigoSku)
@@ -81,19 +82,20 @@ public class OrderService {
 	            boolean allProductosInStock = Arrays.stream(inventarioResponseArray)
 	                    .allMatch(InventarioResponse::isInStock);
 	            orderRepository.save(order);
-	      /*      if(allProductosInStock){
+	            if(allProductosInStock){
 	                orderRepository.save(order);
+	                return "Pedido ordenado con exito";
 	               /* enviarMensajeConRabbitMQ("Notificacion con RabbitMQ, Pedido ordenado con exito");
 	                kafkaTemplate.send("notificationTopic",new OrderPlacedEvent(order.getNumeroPedido()));
-	                return "Pedido ordenado con exito";
-	            */}
-	     /*       else{
+	               
+	           */ }
+	            else{
 	                throw new IllegalArgumentException("El producto no esta en stock");
-	            }*/
+	            }
 	        //}finally {
 	            //inventarioServiceLookup.end();
 	       // }
-	   // }
+	    }
 	/*
 	    private void enviarMensajeConRabbitMQ(String message){
 	        log.info("El mensaje '{}' ha sido enviado con exito",message);
